@@ -6,7 +6,7 @@ from openpyxl import load_workbook, Workbook
 from django.http import HttpResponse
 import datetime
 from .models import *
-
+from django.conf import settings
 
 def list_college():
     colleges = college.objects.all()
@@ -33,7 +33,7 @@ def sendmail(email, otp):
     connect = SMTP('smtp.gmail.com', 587)
     connect.ehlo()
     connect.starttls()
-    connect.login(str('rrohitanand3336@gmail.com'), str('qbkpstvmwfgswlec'))
+    connect.login(str('rrohitanand3336@gmail.com'), str(settings.MAIL_KEY))
     content = 'Subject: ' + str('OTP for login portal') + '\n\n' + str('Your six digit OTP is ') + str(
         otp) + '\n\n' + 'Regards\nAlumni\'s Call'
     connect.sendmail(str('rrohitanand3336@gmail.com'), str(email), content)
@@ -50,7 +50,7 @@ def recover_mail(email, password):
     connect = SMTP('smtp.gmail.com', 587)
     connect.ehlo()
     connect.starttls()
-    connect.login(str('rrohitanand3336@gmail.com'), str('qbkpstvmwfgswlec'))
+    connect.login(str('rrohitanand3336@gmail.com'), str(''))
     content = 'Subject: ' + str('Change Password') + '\n\n' + str('Your Temporary password is ') + str(
         password) + '\n\n' + str('Please login and change your temporary password') + '\n\n' + 'Regards\nAlumni\'s Call'
     connect.sendmail(str('rrohitanand3336@gmail.com'), str(email), content)

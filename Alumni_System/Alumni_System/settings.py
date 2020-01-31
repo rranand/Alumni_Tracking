@@ -18,8 +18,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
+with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.getcwd())))), 'keys.txt')) as f:
+    lines = f.readlines()
+
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '0p&*4w#r&9&5@%n)+c(e^=y5cpvw*b5etkyr*v1p(kon#@zk6('
+SECRET_KEY = str(lines[0])
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -136,3 +140,6 @@ LOGIN_REDIRECT_URL = 'user_logged_in'
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '961701122494-b8v1lnj1k0i99sg5sbg1e6nqtsgv8kkh.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'ZRJ4T7hcSTcqhYOFUAWzcHY_'
+
+
+MAIL_KEY = lines[1]
