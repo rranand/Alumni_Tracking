@@ -2,26 +2,28 @@ from django.shortcuts import render, redirect
 from .forms import *
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
+from django.utils.encoding import smart_str
 from .collection import *
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from datetime import date
-from .custom_filter import *
-
 
 otp = None
 
 
 def home(request):
+    events = Event.objects.all().order_by('-event_on')[:5]
     if request.user.is_authenticated:
         profile = object_collector(request)
         context = {
             'profile': profile,
+            'notices': public_notice.objects.all().order_by('-strap')[:5]
         }
     else:
         context = {}
+    context['event_side'] = events
     return render(request, 'home.html', context)
 
 
@@ -65,7 +67,6 @@ def register(request):
 def user_login(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse('user_logged_in'))
-
     f1 = login_form()
 
     if request.method == 'POST':
@@ -157,7 +158,6 @@ def forget_password(request):
 @login_required(login_url='user_login')
 def user_logged_in(request):
     global otp
-
     profile = object_collector(request)
 
     if not profile.verified and len(str(otp)) != 6:
@@ -470,6 +470,12 @@ def profile_view(request, username):
     f2 = alumni_details_more(instance=profiles)
     c_college = profile.college
     if request.method == 'POST':
+
+        if 'upload_file' in request.FILES:
+            for file in request.FILES.getlist('upload_file'):
+                file_save = file_handler.objects.create(profile=profile, file=file)
+                file_save.save()
+
         if 'update_profile' in request.POST:
             if request.user.username == username:
                 return render(request, 'profile.html', context={'form_1': f1, 'form_2': f2, 'edit_show': True,
@@ -502,6 +508,8 @@ def profile_view(request, username):
             'profiles': profiles,
         }
 
+    if profile.is_alumni:
+        context['files'] = file_handler.objects.filter(profile=profile)
     return render(request, 'profile.html', context)
 
 
@@ -761,3 +769,49 @@ def event(request):
     }
 
     return render(request, 'events.html', context)
+
+
+@login_required(login_url='user_login')
+def call_download(request, file_id):
+    file = file_handler.objects.get(id=file_id)
+    path = file.file.url
+    os.chdir(get_media_path(path))
+    f_name = os.path.split(file.file.name)[1]
+    with open(os.path.join(os.getcwd(), f_name), 'rb') as f:
+        response = HttpResponse(f.read(), content_type='application/force-download')
+        response['Content-Disposition'] = 'attachment; filename="%s"' % str(f_name)
+        response['X-Sendfile'] = smart_str(path)
+        return response
+
+
+@login_required(login_url='user_login')
+def call_delete(request, file_id):
+    file = file_handler.objects.get(id=file_id)
+    file.delete()
+    return redirect(
+        'http://{host}/alumni/profile/{username}'.format(username=request.user.username, host=request.get_host()))
+
+
+@login_required(login_url='user_login')
+def academic_token(request, user_id):
+    token_number = None
+    profile = object_collector(request)
+    if not profile.verified:
+        return HttpResponseRedirect(reverse('user_logged_in'))
+
+    search = request.GET.get('search')
+    if search:
+        host = request.get_host()
+        return redirect('http://{host}/alumni/dashboard/?search={search}'.format(host=host, search=search))
+
+    if request.method == 'POST':
+        if 'form_type' in request.POST:
+            token_number = generate_token(profile, request.POST.get('form_type'))
+
+    context = {
+        'profile': profile,
+    }
+    if token_number is not None:
+        context['token_registered'] = token_number
+
+    return render(request, 'acdemictoken.html', context=context)

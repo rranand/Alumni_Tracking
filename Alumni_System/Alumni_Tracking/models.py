@@ -158,3 +158,22 @@ class attend_event(models.Model):
 
     def __str__(self):
         return self.attendee.user.username
+
+
+def user_instance_file(instance, filename):
+    return '{0}/{1}/{2}/{3}'.format('resume', instance.profile.user.username, 'carrier', filename)
+
+
+class file_handler(models.Model):
+    profile = models.ForeignKey(alumni, on_delete=models.CASCADE, null=True)
+    file = models.FileField(null=True, upload_to=user_instance_file, default=None, blank=True)
+
+    def __str__(self):
+        return self.profile.user.username
+
+
+class public_notice(models.Model):
+    title = models.CharField(max_length=100, rel='title')
+    strap = models.DateTimeField(auto_now_add=True)
+    notice = models.CharField(max_length=300)
+

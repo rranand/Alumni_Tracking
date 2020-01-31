@@ -40,7 +40,11 @@
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" href="{% url 'new_post' %}">Create New Post</a>
           <a class="dropdown-item" href="{% url 'user_posts' %}">My Post</a>
-        </div></li>{% endif %}
+        </div></li>
+        <li class="nav-item active">
+        <a class="nav-link" href="{% url 'academic_token' profile.id %}">Academics Form<span class="sr-only">(current)</span></a>
+      </li>
+        {% endif %}
             {% endif %}{% if profile.is_alumni or not request.user.is_authenticated %}
         <li class="nav-item active">
         <a class="nav-link" href="https://google.com">Donate <span class="sr-only">(current)</span></a>

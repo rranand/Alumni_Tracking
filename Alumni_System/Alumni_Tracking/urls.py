@@ -14,10 +14,13 @@ urlpatterns = [
     path('mypost', views.all_post, name='user_posts'),
     url(r'^edit/(?P<post_id>[\d]+)/$', views.update_article, name='user_post_update'),
     path('change-password', views.change_password, name='user_change_password'),
-    url(r'^profile/(?P<username>[\w]+$)', views.profile_view, name='user_profile'),
+    url(r'^profile/(?P<username>[\w]+)$', views.profile_view, name='user_profile'),
     path('alumni', views.alumni_list, name='alumni_list'),
     url('^oauth/', include('social_django.urls', namespace='social')),
     path('projects', views.list_projects, name='user_projects'),
     path('internships', views.list_internships, name='user_internships'),
     path('events', views.event, name='user_events'),
+    url(r'^download/(?P<file_id>[\d]+)/$', views.call_download, name='user_download'),
+    url(r'^delete/(?P<file_id>[\d]+)/$', views.call_delete, name='user_delete'),
+    url(r'^academic-forms/(?P<user_id>[\d]+)$', views.academic_token, name='academic_token')
 ]

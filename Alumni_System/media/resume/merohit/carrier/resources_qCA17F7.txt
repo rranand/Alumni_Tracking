@@ -1,0 +1,29 @@
+--- Resources for JavaScript/Node.js, Express & Pug/Jade ---
+
+Node.js: Javascript Runtime Environment
+Express: Web Backend Framework
+Pug/Jade: Webpage Templating Engine
+(The meaning to everything shall become clear soon, don't worry)
+
+--- Links for JavaScript/Node.js: ---
+
+Learn JavaScript - Full Course for Beginners :
+https://www.youtube.com/watch?v=PkZNo7MFNFg
+
+Node.js Tutorial for Beginners: Learn Node in 1 Hour | Mosh:
+https://www.youtube.com/watch?v=TlB_eWDSMt4
+
+Note: I suggest going through the first 10 minutes or so of the Node.js tutorial first to learn how to install Node.js and run js scripts using Node. After that you can jump onto the JavaScript Video to learn the basics of JS (Syntax and Semantics) and then jump back to the Node video to learn Node-specific features.
+
+--- Links for Express & Pug/Jade: ---
+Note: Pug == Jade
+
+Express:
+https://www.youtube.com/playlist?list=PLillGF-RfqbYRpji8t4SxUkMxfowG4Kqp
+
+Note: The above link points to a playlist where the guy creates a simple web application using Express, Pug, MongoDB (Database) and Bootstrap for frontend, so the playlist is killing a few birds with one stone.
+
+Pug:
+https://www.youtube.com/watch?v=kt3cEjjkCZA
+
+Note: You don't really need to watch this whole thing after the playlist above.

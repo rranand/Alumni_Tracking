@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load custom_filter %}
 {% block title %}My Profile | {{ block.super }}{% endblock %}
 
 {% block content %}
@@ -35,7 +36,11 @@
                 <p>Username: {{ form_1.username }}</p>
                 <p>Email ID: {{ form_1.email }}</p>
                 {{ form_2.as_p }}
-                <button type="submit" class="btn btn-outline-success">Save</button>
+                <p>
+                <label for="upload_file">Upload files</label>
+                <input class="form-control" id="upload_file" type="file" name="upload_file" multiple>
+                <small>Upload your job related details</small></p>
+                <button type="submit" style="margin-bottom: 30px" class="btn btn-outline-success">Save</button>
             </form>
         {% else %}
         <img class="rounded-circle float-left" title="{{ profiles.user.get_full_name }}" src="{{ profiles.profile_pic.url }}"  width="270px" height="270px" style="margin-bottom: 15px">
@@ -46,7 +51,17 @@
             <p>College: <strong>{{ profiles.college }}</strong></p>
             <p>Graduated: <strong>{{ profiles.graduate }}</strong></p>
             <p>About me: <strong>{{ profiles.about_me }}</strong></p>
-        </div>
+            </div><br>
+
+            {% if files.exists and profile.user == request.user %}<div style="float: left; margin-top: 7cm">
+            <hr style="margin-top: 20px; margin-bottom: 20px ">
+            <h2> Files Uploaded:</h2><br>
+                {% for file in files %}
+                    <p>{{ file.file.name| get_filename | title }}<a href="{% url 'user_download' file.id %}" ><button style="margin-left: 15px" class="btn btn-outline-success">Download</button></a>
+                    <a href="{% url 'user_delete' file.id %}" ><button style="margin-left: 15px" class="btn btn-outline-danger">Delete</button></a></p>
+                {% endfor %}</div>
+            {% endif %}
+
         {% endif %}
 
     </div>

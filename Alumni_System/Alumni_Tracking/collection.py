@@ -1,7 +1,11 @@
-from .models import *
+import os
+import random
 import re
 from smtplib import SMTP
-import random
+from openpyxl import load_workbook, Workbook
+from django.http import HttpResponse
+import datetime
+from .models import *
 
 
 def list_college():
@@ -14,10 +18,13 @@ def list_college():
     return tuple(college_list)
 
 
-def generate_password():
-    get = 'abcdefghijklmnopqrstuvwxyz1234567890!@#&'
+def generate_password(token=None):
+    if token is None:
+        get = 'abcdefghijklmnopqrstuvwxyz1234567890!@#&'
+    else:
+        get = 'abcdefghijklmnopqrstuvwxyz1234567890'
     password = ''
-    for i in range(10):
+    for i in range(12):
         password += get[random.randint(0, len(get) - 1)]
     return str(password)
 
@@ -62,14 +69,46 @@ def object_collector(request):
 
 
 def post_collector(request):
-
     return blog.objects.filter(author__college_id=object_collector(request).college_id).order_by('-views', '-like')[:5]
 
 
 def internships_collector(request):
-
     return internships.objects.filter(author__college_id=object_collector(request).college_id).order_by('-added')[:5]
 
 
 def event_collector(request):
     return Event.objects.filter(college_id__exact=object_collector(request).college_id).order_by('-event_on')[:5]
+
+
+def get_media_path(url):
+    return os.path.join(os.path.join(os.getcwd(), os.path.join('media', 'resume', str(
+        os.path.split(os.path.split(os.path.split(url)[0])[0])[1]), 'carrier')))
+
+
+def mobile_check(request):
+    if re.search('(Android)', request.META['HTTP_USER_AGENT']):
+        return HttpResponse(b'Visit this website through Laptop or DeskTop')
+
+
+def generate_token(user, type_form):
+    if os.path.exists(os.path.join(os.path.dirname(os.getcwd()), 'generated_token.xlsx')):
+        wk = load_workbook(os.path.join(os.path.dirname(os.getcwd()), 'generated_token.xlsx'))
+    else:
+        wk = Workbook()
+    token_number = generate_password(True)
+    query = True
+    ws = wk.active
+    for row in range(2, ws.max_row + 1):
+        if ws.cell(row=row, column=2).value == user.user.email and ws.cell(row=row, column=6).value == type_form:
+            token_number = ws.cell(row=row, column=5).value
+            query = False
+            break
+        if ws.cell(row=row, column=5).value == token_number:
+            token_number = generate_password(True)
+    if query:
+        ws.append([user.user.get_full_name(), user.user.email, user.graduate, user.college.college_name, token_number,
+                   type_form, datetime.datetime.now()])
+
+    wk.save(os.path.join(os.path.dirname(os.getcwd()), 'generated_token.xlsx'))
+
+    return token_number

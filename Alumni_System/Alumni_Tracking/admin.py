@@ -35,6 +35,12 @@ class studentAdmin(admin.ModelAdmin):
     search_fields = ('user__username', 'reg_id')
 
 
+class noticeAdmin(admin.ModelAdmin):
+    list_display = ('title', 'notice', 'strap')
+    list_filter = ('strap', )
+    search_fields = ('title', 'notice')
+
+
 admin.site.register(college)
 admin.site.register(alumni, alumniAdmin)
 admin.site.register(blog, blogAdmin)
@@ -46,3 +52,5 @@ admin.site.register(projects)
 admin.site.register(fund_projects)
 admin.site.register(Event)
 admin.site.register(attend_event)
+admin.site.register(file_handler)
+admin.site.register(public_notice, noticeAdmin)
