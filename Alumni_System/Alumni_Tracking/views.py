@@ -40,9 +40,12 @@ def register(request):
 
         if f1.is_valid() and f2.is_valid():
             email = f1.cleaned_data['email']
+            if bool(re.search('mitaoe.ac.in$', str(email))):
+                return render(request, 'register.html', context={'form_basic': f1, 'form_more': f2,
+                                                                 'error': 'Use your primary email'})
             if alumni.objects.filter(user__email=email).exists():
-                return render(request, 'home.html', context={'form_basic': f1, 'form_more': f2,
-                                                             'error': 'Email is already registered.'})
+                return render(request, 'register.html', context={'form_basic': f1, 'form_more': f2,
+                                                                 'error': 'Email is already registered.'})
             elif f1.cleaned_data['password'] != f1.cleaned_data['v_password']:
                 return render(request, 'home.html', context={'form_basic': f1, 'form_more': f2,
                                                              'error': 'Password does not matched'})
@@ -94,7 +97,7 @@ def user_login(request):
                                   context={'login_form': f1, 'message': 'Wrong Password Dikara!!!'})
                 else:
                     login(request, user)
-                    return HttpResponseRedirect(reverse('home'))
+                    return HttpResponseRedirect(reverse('user_logged_in'))
 
             elif login_as == '2':
                 try:
@@ -247,9 +250,10 @@ def view_post(request, slug):
     new_internship = internships_collector(request)
     if not profile.verified:
         return HttpResponseRedirect(reverse('user_logged_in'))
+
     search = request.GET.get('search')
     if search:
-        return redirect('http://127.0.0.1:8000/alumni/dashboard/?search=%s' % search)
+        return HttpResponseRedirect('dashboard/?search=%s' % search)
 
     try:
         post = blog.objects.get(slug=slug)
@@ -307,6 +311,7 @@ def post_create(request):
     f1 = post_create_form()
 
     search = request.GET.get('search')
+
     if search:
         return HttpResponseRedirect('dashboard/?search=%s' % search)
 
@@ -463,8 +468,7 @@ def profile_view(request, username):
 
     search = request.GET.get('search')
     if search:
-        host = request.get_host()
-        return redirect('http://{host}/alumni/dashboard/?search={search}'.format(host=host, search=search))
+        return HttpResponseRedirect('dashboard/?search=%s' % search)
 
     f1 = alumni_details_basic(instance=profiles.user)
     f2 = alumni_details_more(instance=profiles)
@@ -521,6 +525,10 @@ def alumni_list(request):
     if not profile.verified:
         return HttpResponseRedirect(reverse('user_logged_in'))
 
+    search = request.GET.get('search')
+    if search:
+        return HttpResponseRedirect('dashboard/?search=%s' % search)
+
     try:
         college_id = alumni.objects.get(user=request.user).college_id
     except alumni.DoesNotExist:
@@ -549,8 +557,7 @@ def alumni_list(request):
 
     search = request.GET.get('search')
     if search:
-        host = request.get_host()
-        return redirect('http://{host}/alumni/dashboard/?search={search}'.format(host=host, search=search))
+        return HttpResponseRedirect('dashboard/?search=%s' % search)
 
     try:
         all_alumni = paginator.get_page(page_num)
@@ -587,8 +594,7 @@ def list_projects(request):
 
     search = request.GET.get('search')
     if search:
-        host = request.get_host()
-        return redirect('http://{host}/alumni/dashboard/?search={search}'.format(host=host, search=search))
+        return HttpResponseRedirect('dashboard/?search=%s' % search)
 
     try:
         college_id = alumni.objects.get(user=request.user).college_id
@@ -633,8 +639,7 @@ def list_internships(request):
 
     search = request.GET.get('search')
     if search:
-        host = request.get_host()
-        return redirect('http://{host}/alumni/dashboard/?search={search}'.format(host=host, search=search))
+        return HttpResponseRedirect('dashboard/?search=%s' % search)
 
     profile = object_collector(request)
     if not profile.verified:
@@ -718,8 +723,7 @@ def event(request):
 
     search = request.GET.get('search')
     if search:
-        host = request.get_host()
-        return redirect('http://{host}/alumni/dashboard/?search={search}'.format(host=host, search=search))
+        return HttpResponseRedirect('dashboard/?search=%s' % search)
 
     try:
         college_id = alumni.objects.get(user=request.user).college_id
@@ -794,6 +798,10 @@ def call_delete(request, file_id):
 
 @login_required(login_url='user_login')
 def academic_token(request, user_id):
+    profile = object_collector(request)
+    if not profile.verified:
+        return HttpResponseRedirect(reverse('user_logged_in'))
+
     token_number = None
     profile = object_collector(request)
     if not profile.verified:
@@ -801,8 +809,7 @@ def academic_token(request, user_id):
 
     search = request.GET.get('search')
     if search:
-        host = request.get_host()
-        return redirect('http://{host}/alumni/dashboard/?search={search}'.format(host=host, search=search))
+        return HttpResponseRedirect('dashboard/?search=%s' % search)
 
     if request.method == 'POST':
         if 'form_type' in request.POST:

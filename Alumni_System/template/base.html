@@ -19,7 +19,7 @@
 
 
  <div class="container-fluid" style="width:22%; float: right; margin-top: 16%; position: relative">
-    {% if request.path_info|get_length == 8 %}
+    {% if request.path_info|get_length == 1 and notices.exists %}
      <ul class="list-group mb-3" style="margin-top: -70%">
             <h4 class="d-flex justify-content-between align-items-center mb-3">
             <span class="text-primary">Public Notice</span>

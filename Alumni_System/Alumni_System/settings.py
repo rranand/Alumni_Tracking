@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -18,7 +19,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
-with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.getcwd())))), 'keys.txt')) as f:
+with open(os.path.join(os.getcwd(), 'keys.txt')) as f:
     lines = f.readlines()
 
 
@@ -28,7 +29,7 @@ SECRET_KEY = str(lines[0])
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.0.100', '127.0.0.1']
+ALLOWED_HOSTS = ['192.168.0.100', '127.0.0.1', '*']
 
 # Application definition
 
@@ -128,6 +129,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
@@ -143,3 +145,4 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'ZRJ4T7hcSTcqhYOFUAWzcHY_'
 
 
 MAIL_KEY = lines[1]
+django_heroku.settings(locals())

@@ -50,9 +50,20 @@ def recover_mail(email, password):
     connect = SMTP('smtp.gmail.com', 587)
     connect.ehlo()
     connect.starttls()
-    connect.login(str('rrohitanand3336@gmail.com'), str(''))
+    connect.login(str('rrohitanand3336@gmail.com'), str(settings.MAIL_KEY))
     content = 'Subject: ' + str('Change Password') + '\n\n' + str('Your Temporary password is ') + str(
         password) + '\n\n' + str('Please login and change your temporary password') + '\n\n' + 'Regards\nAlumni\'s Call'
+    connect.sendmail(str('rrohitanand3336@gmail.com'), str(email), content)
+    connect.quit()
+
+
+def token_mail(email, token_num):
+    connect = SMTP('smtp.gmail.com', 587)
+    connect.ehlo()
+    connect.starttls()
+    connect.login(str('rrohitanand3336@gmail.com'), str(settings.MAIL_KEY))
+    content = 'Subject: ' + str('Token Number') + '\n\n' + str('Your token has been generated. Your token number is ') + str(
+        token_num) + '\n\n' + 'Regards\nAlumni\'s Call'
     connect.sendmail(str('rrohitanand3336@gmail.com'), str(email), content)
     connect.quit()
 
@@ -91,8 +102,8 @@ def mobile_check(request):
 
 
 def generate_token(user, type_form):
-    if os.path.exists(os.path.join(os.path.dirname(os.getcwd()), 'generated_token.xlsx')):
-        wk = load_workbook(os.path.join(os.path.dirname(os.getcwd()), 'generated_token.xlsx'))
+    if os.path.exists(os.path.join(os.getcwd(), 'generated_token.xlsx')):
+        wk = load_workbook(os.path.join(os.getcwd(), 'generated_token.xlsx'))
     else:
         wk = Workbook()
     token_number = generate_password(True)
@@ -108,7 +119,7 @@ def generate_token(user, type_form):
     if query:
         ws.append([user.user.get_full_name(), user.user.email, user.graduate, user.college.college_name, token_number,
                    type_form, datetime.datetime.now()])
-
-    wk.save(os.path.join(os.path.dirname(os.getcwd()), 'generated_token.xlsx'))
+    token_mail(user.user.email, token_number)
+    wk.save(os.path.join(os.getcwd(), 'generated_token.xlsx'))
 
     return token_number
