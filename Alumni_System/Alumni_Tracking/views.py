@@ -182,8 +182,7 @@ def user_logged_in(request):
                 profile.verified = True
                 profile.save(update_fields=['verified'])
                 otp = None
-                return render(request, 'dashboard.html',
-                              context={'profile': profile})
+                return HttpResponseRedirect(reverse('user_logged_in'))
             else:
                 return render(request, 'dashboard.html',
                               context={'profile': profile, 'otp_verify': f1,
@@ -555,10 +554,6 @@ def alumni_list(request):
     paginator = Paginator(all_alumni, 9)
     page_num = request.GET.get('page')
 
-    search = request.GET.get('search')
-    if search:
-        return HttpResponseRedirect('dashboard/?search=%s' % search)
-
     try:
         all_alumni = paginator.get_page(page_num)
     except PageNotAnInteger:
@@ -792,12 +787,11 @@ def call_download(request, file_id):
 def call_delete(request, file_id):
     file = file_handler.objects.get(id=file_id)
     file.delete()
-    return redirect(
-        'http://{host}/alumni/profile/{username}'.format(username=request.user.username, host=request.get_host()))
+    return HttpResponseRedirect('profile/%s' % request.user.username)
 
 
 @login_required(login_url='user_login')
-def academic_token(request, user_id):
+def academic_token(request):
     profile = object_collector(request)
     if not profile.verified:
         return HttpResponseRedirect(reverse('user_logged_in'))

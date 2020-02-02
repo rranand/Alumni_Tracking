@@ -22,5 +22,5 @@ urlpatterns = [
     path('events', views.event, name='user_events'),
     url(r'^download/(?P<file_id>[\d]+)/$', views.call_download, name='user_download'),
     url(r'^delete/(?P<file_id>[\d]+)/$', views.call_delete, name='user_delete'),
-    url(r'^academic-forms/(?P<user_id>[\d]+)$', views.academic_token, name='academic_token')
+    path('academic-forms', views.academic_token, name='academic_token')
 ]
