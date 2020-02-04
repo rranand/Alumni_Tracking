@@ -8,6 +8,7 @@ import datetime
 from .models import *
 from django.conf import settings
 
+
 def list_college():
     colleges = college.objects.all()
     college_list = []
@@ -62,7 +63,8 @@ def token_mail(email, token_num):
     connect.ehlo()
     connect.starttls()
     connect.login(str('rrohitanand3336@gmail.com'), str(settings.MAIL_KEY))
-    content = 'Subject: ' + str('Token Number') + '\n\n' + str('Your token has been generated. Your token number is ') + str(
+    content = 'Subject: ' + str('Token Number') + '\n\n' + str(
+        'Your token has been generated. Your token number is ') + str(
         token_num) + '\n\n' + 'Regards\nAlumni\'s Call'
     connect.sendmail(str('rrohitanand3336@gmail.com'), str(email), content)
     connect.quit()
@@ -123,3 +125,12 @@ def generate_token(user, type_form):
     wk.save(os.path.join(os.getcwd(), 'generated_token.xlsx'))
 
     return token_number
+
+
+def collect_notifications(request):
+    try:
+        college_id = alumni.objects.get(user=request.user).college_id
+    except alumni.DoesNotExist:
+        college_id = student.objects.get(user=request.user).college_id
+    notify = blog.objects.filter(author__college_id=college_id).order_by('-publish_date')[:6]
+    return notify

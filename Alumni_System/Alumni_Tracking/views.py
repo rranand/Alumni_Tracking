@@ -19,7 +19,8 @@ def home(request):
         profile = object_collector(request)
         context = {
             'profile': profile,
-            'notices': public_notice.objects.all().order_by('-strap')[:5]
+            'notices': public_notice.objects.all().order_by('-strap')[:5],
+            'notify': collect_notifications(request)
         }
     else:
         context = {}
@@ -229,12 +230,12 @@ def user_logged_in(request):
     if profile:
         context = {'alumni': profile, 'otp_verify': f1, 'posts': post, 'page_upper': int(page_num) + 5,
                    'page_lower': int(page_num), 'profile': profile, 'popular_post': popular_post,
-                   'new_intern': new_internship, 'event_side': event_side}
+                   'new_intern': new_internship, 'event_side': event_side, 'notify': collect_notifications(request)}
 
     if flag:
         context = {'alumni': profile, 'otp_verify': f1, 'message': str(str(search) + ' not found!!!'), 'page_upper': 0,
                    'page_lower': 0, 'profile': profile, 'popular_post': popular_post, 'new_intern': new_internship,
-                   'event_side': event_side}
+                   'event_side': event_side, 'notify': collect_notifications(request)}
 
     if profile.verified:
         context.pop('otp_verify')
@@ -296,6 +297,7 @@ def view_post(request, slug):
         'popular_post': popular_post,
         'new_intern': new_internship,
         'event_side': event_side,
+        'notify': collect_notifications(request)
     }
 
     return render(request, 'article.html', context=context)
@@ -334,6 +336,7 @@ def post_create(request):
     context = {
         'form': f1,
         'profile': profile,
+        'notify': collect_notifications(request),
     }
     return render(request, 'new_article.html', context)
 
@@ -369,6 +372,7 @@ def all_post(request):
         'page_upper': int(page_num) + 5,
         'page_lower': int(page_num),
         'profile': profile,
+        'notify': collect_notifications(request),
     }
 
     if request.method == 'POST':
@@ -407,13 +411,13 @@ def update_article(request, post_id):
             update_form.save()
             return render(request, 'update_article.html', context={'update_post': update_form,
                                                                    'message': 'Post Update Successfully!!!',
-                                                                   'profile': profile})
+                                                                   'profile': profile, 'notify': collect_notifications(request)})
         elif not update_form.is_valid():
             return render(request, 'update_article.html', context={'update_post': update_form,
                                                                    'message_error': 'Something went Wrong!!!',
-                                                                   'profile': profile})
+                                                                   'profile': profile, 'notify': collect_notifications(request)})
 
-    return render(request, 'update_article.html', context={'update_post': update_form, 'profile': profile})
+    return render(request, 'update_article.html', context={'update_post': update_form, 'profile': profile, 'notify': collect_notifications(request)})
 
 
 @login_required(login_url='user_login')
@@ -440,13 +444,13 @@ def change_password(request):
                 request.user.save(update_fields=['password'])
 
                 return render(request, 'changepassword.html',
-                              context={'form': f1, 'message': 'Password updated successfully', 'profile': profile})
+                              context={'form': f1, 'message': 'Password updated successfully', 'profile': profile, 'notify': collect_notifications(request)})
 
             else:
                 return render(request, 'changepassword.html',
-                              context={'form': f1, 'message_error': 'Password is incorrect', 'profile': profile})
+                              context={'form': f1, 'message_error': 'Password is incorrect', 'profile': profile, 'notify': collect_notifications(request)})
 
-    return render(request, 'changepassword.html', context={'form': f1, 'profile': profile})
+    return render(request, 'changepassword.html', context={'form': f1, 'profile': profile, 'notify': collect_notifications(request)})
 
 
 @login_required(login_url='user_login')
@@ -482,7 +486,7 @@ def profile_view(request, username):
         if 'update_profile' in request.POST:
             if request.user.username == username:
                 return render(request, 'profile.html', context={'form_1': f1, 'form_2': f2, 'edit_show': True,
-                                                                'profiles': profiles, 'profile': profile})
+                                                                'profiles': profiles, 'profile': profile, 'notify': collect_notifications(request)})
 
         f2 = alumni_details_more(instance=profiles, data=request.POST, files=request.FILES or None)
         if f2.is_valid():
@@ -491,17 +495,18 @@ def profile_view(request, username):
             profile.save(update_fields=['college'])
             return render(request, 'profile.html', context={'edit': True, 'profile': profile,
                                                             'message': 'Profile updated successfully!!!',
-                                                            'profiles': profiles})
+                                                            'profiles': profiles, 'notify': collect_notifications(request)})
         elif not f2.is_valid():
             return render(request, 'profile.html',
                           context={'form_1': f1, 'form_2': f2, 'edit': True, 'edit_show': True, 'profile': profile,
-                                   'message_error': 'Something went wrong!!!', 'profiles': profiles})
+                                   'message_error': 'Something went wrong!!!', 'profiles': profiles, 'notify': collect_notifications(request)})
 
     if request.user.username == username:
         context = {
             'edit': True,
             'profile': profile,
             'profiles': profiles,
+            'notify': collect_notifications(request)
         }
 
     else:
@@ -509,6 +514,7 @@ def profile_view(request, username):
             'edit': False,
             'profile': profile,
             'profiles': profiles,
+            'notify': collect_notifications(request)
         }
 
     if profile.is_alumni:
@@ -569,6 +575,7 @@ def alumni_list(request):
         'page_upper': int(page_num) + 5,
         'page_lower': int(page_num),
         'profile': profile,
+        'notify': collect_notifications(request)
     }
 
     if flag:
@@ -611,6 +618,7 @@ def list_projects(request):
     if flag:
         context = {
             'all_projects': all_projects,
+            'notify': collect_notifications(request),
             'profile': profile,
             'pop_up': True,
         }
@@ -618,6 +626,7 @@ def list_projects(request):
     else:
         context = {
             'all_projects': all_projects,
+            'notify': collect_notifications(request),
             'profile': profile,
         }
     if flag is None:
@@ -694,6 +703,7 @@ def list_internships(request):
         'job_form': f1,
         'apply_form': f2,
         'profile': profile,
+        'notify': collect_notifications(request),
     }
 
     if flag:
@@ -765,6 +775,7 @@ def event(request):
         'event_side': event_side,
         'popular_post': popular_post,
         'new_intern': new_internship,
+        'notify': collect_notifications(request),
     }
 
     return render(request, 'events.html', context)
@@ -786,8 +797,9 @@ def call_download(request, file_id):
 @login_required(login_url='user_login')
 def call_delete(request, file_id):
     file = file_handler.objects.get(id=file_id)
+    os.remove(file.file.path)
     file.delete()
-    return HttpResponseRedirect('profile/%s' % request.user.username)
+    return HttpResponse("File Deleted Successfully!!!")
 
 
 @login_required(login_url='user_login')
@@ -811,6 +823,7 @@ def academic_token(request):
 
     context = {
         'profile': profile,
+        'notify': collect_notifications(request),
     }
     if token_number is not None:
         context['token_registered'] = token_number
