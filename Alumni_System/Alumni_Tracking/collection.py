@@ -100,7 +100,7 @@ def get_media_path(url):
 
 def mobile_check(request):
     if re.search('(Android)', request.META['HTTP_USER_AGENT']):
-        return HttpResponse(b'Visit this website through Laptop or DeskTop')
+        return True
 
 
 def generate_token(user, type_form):

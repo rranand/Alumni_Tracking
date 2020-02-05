@@ -14,6 +14,10 @@ otp = None
 
 
 def home(request):
+
+    if mobile_check(request):
+        return render(request, 'stop.html')
+
     events = Event.objects.all().order_by('-event_on')[:5]
     if request.user.is_authenticated:
         profile = object_collector(request)
@@ -31,6 +35,9 @@ def home(request):
 def register(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse('user_logged_in'))
+
+    if mobile_check(request):
+        return render(request, 'stop.html')
 
     f1 = alumni_details_basic()
     f2 = alumni_details_more()
@@ -69,6 +76,10 @@ def register(request):
 
 
 def user_login(request):
+
+    if mobile_check(request):
+        return render(request, 'stop.html')
+
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse('user_logged_in'))
     f1 = login_form()
@@ -126,6 +137,10 @@ def user_logout(request):
 
 
 def forget_password(request):
+
+    if mobile_check(request):
+        return render(request, 'stop.html')
+
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse('user_logged_in'))
 
@@ -161,6 +176,10 @@ def forget_password(request):
 
 @login_required(login_url='user_login')
 def user_logged_in(request):
+
+    if mobile_check(request):
+        return render(request, 'stop.html')
+
     global otp
     profile = object_collector(request)
 
@@ -244,6 +263,10 @@ def user_logged_in(request):
 
 @login_required(login_url='user_login')
 def view_post(request, slug):
+
+    if mobile_check(request):
+        return render(request, 'stop.html')
+
     f1 = comment_form()
     profile = object_collector(request)
     popular_post = post_collector(request)
@@ -305,6 +328,10 @@ def view_post(request, slug):
 
 @login_required(login_url='user_login')
 def post_create(request):
+
+    if mobile_check(request):
+        return render(request, 'stop.html')
+
     profile = object_collector(request)
     if not profile.verified or not profile.is_alumni:
         return HttpResponseRedirect(reverse('user_logged_in'))
@@ -343,6 +370,10 @@ def post_create(request):
 
 @login_required(login_url='user_login')
 def all_post(request):
+
+    if mobile_check(request):
+        return render(request, 'stop.html')
+
     profile = object_collector(request)
     if not profile.verified or not profile.is_alumni:
         return HttpResponseRedirect(reverse('user_logged_in'))
@@ -389,6 +420,10 @@ def all_post(request):
 
 @login_required(login_url='user_login')
 def update_article(request, post_id):
+
+    if mobile_check(request):
+        return render(request, 'stop.html')
+
     profile = object_collector(request)
     if not profile.verified or not profile.is_alumni:
         return HttpResponseRedirect(reverse('user_logged_in'))
@@ -422,6 +457,10 @@ def update_article(request, post_id):
 
 @login_required(login_url='user_login')
 def change_password(request):
+
+    if mobile_check(request):
+        return render(request, 'stop.html')
+
     f1 = change_password_form()
 
     profile = object_collector(request)
@@ -455,6 +494,10 @@ def change_password(request):
 
 @login_required(login_url='user_login')
 def profile_view(request, username):
+
+    if mobile_check(request):
+        return render(request, 'stop.html')
+
     profile = object_collector(request)
     if not profile.verified:
         return HttpResponseRedirect(reverse('user_logged_in'))
@@ -524,6 +567,10 @@ def profile_view(request, username):
 
 @login_required(login_url='user_login')
 def alumni_list(request):
+
+    if mobile_check(request):
+        return render(request, 'stop.html')
+
     flag = False
 
     profile = object_collector(request)
@@ -590,6 +637,10 @@ def alumni_list(request):
 @login_required(login_url='user_login')
 def list_projects(request):
     flag = False
+
+    if mobile_check(request):
+        return render(request, 'stop.html')
+
     profile = object_collector(request)
     if not profile.verified:
         return HttpResponseRedirect(reverse('user_logged_in'))
@@ -638,6 +689,10 @@ def list_projects(request):
 @login_required(login_url='user_login')
 def list_internships(request):
     flag = False
+
+    if mobile_check(request):
+        return render(request, 'stop.html')
+
     f1 = internship_form()
     f2 = apply_internship_form()
 
@@ -716,6 +771,10 @@ def list_internships(request):
 
 @login_required(login_url='user_login')
 def event(request):
+
+    if mobile_check(request):
+        return render(request, 'stop.html')
+
     already_registerd = False
     message = False
     event_confirmed = False
@@ -804,6 +863,10 @@ def call_delete(request, file_id):
 
 @login_required(login_url='user_login')
 def academic_token(request):
+
+    if mobile_check(request):
+        return render(request, 'stop.html')
+
     profile = object_collector(request)
     if not profile.verified:
         return HttpResponseRedirect(reverse('user_logged_in'))
