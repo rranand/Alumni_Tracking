@@ -177,3 +177,16 @@ class public_notice(models.Model):
     strap = models.DateTimeField(auto_now_add=True)
     notice = models.CharField(max_length=300)
 
+
+class add_friend(models.Model):
+    profile = models.ForeignKey(alumni, on_delete=models.CASCADE, null=True, related_name='sender')
+    friends = models.ForeignKey(alumni, on_delete=models.CASCADE, null=True)
+    confirm = models.BooleanField(default=False, null=True)
+
+    class Meta:
+        unique_together = ['profile', 'friends']
+
+    def __str__(self):
+        return self.profile.user.username
+
+

@@ -41,6 +41,9 @@ class noticeAdmin(admin.ModelAdmin):
     search_fields = ('title', 'notice')
 
 
+admin.site.site_header = "Alumni's Call Admin"
+admin.site.site_title = "Alumni's Call Admin Portal"
+admin.site.index_title = "Welcome to Alumni's Call"
 admin.site.register(college)
 admin.site.register(alumni, alumniAdmin)
 admin.site.register(blog, blogAdmin)
@@ -54,3 +57,4 @@ admin.site.register(Event)
 admin.site.register(attend_event)
 admin.site.register(file_handler)
 admin.site.register(public_notice, noticeAdmin)
+admin.site.register(add_friend)

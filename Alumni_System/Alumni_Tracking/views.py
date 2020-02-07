@@ -14,7 +14,6 @@ otp = None
 
 
 def home(request):
-
     if mobile_check(request):
         return render(request, 'stop.html')
 
@@ -76,7 +75,6 @@ def register(request):
 
 
 def user_login(request):
-
     if mobile_check(request):
         return render(request, 'stop.html')
 
@@ -137,7 +135,6 @@ def user_logout(request):
 
 
 def forget_password(request):
-
     if mobile_check(request):
         return render(request, 'stop.html')
 
@@ -176,7 +173,6 @@ def forget_password(request):
 
 @login_required(login_url='user_login')
 def user_logged_in(request):
-
     if mobile_check(request):
         return render(request, 'stop.html')
 
@@ -263,7 +259,6 @@ def user_logged_in(request):
 
 @login_required(login_url='user_login')
 def view_post(request, slug):
-
     if mobile_check(request):
         return render(request, 'stop.html')
 
@@ -328,7 +323,6 @@ def view_post(request, slug):
 
 @login_required(login_url='user_login')
 def post_create(request):
-
     if mobile_check(request):
         return render(request, 'stop.html')
 
@@ -370,7 +364,6 @@ def post_create(request):
 
 @login_required(login_url='user_login')
 def all_post(request):
-
     if mobile_check(request):
         return render(request, 'stop.html')
 
@@ -420,7 +413,6 @@ def all_post(request):
 
 @login_required(login_url='user_login')
 def update_article(request, post_id):
-
     if mobile_check(request):
         return render(request, 'stop.html')
 
@@ -446,18 +438,20 @@ def update_article(request, post_id):
             update_form.save()
             return render(request, 'update_article.html', context={'update_post': update_form,
                                                                    'message': 'Post Update Successfully!!!',
-                                                                   'profile': profile, 'notify': collect_notifications(request)})
+                                                                   'profile': profile,
+                                                                   'notify': collect_notifications(request)})
         elif not update_form.is_valid():
             return render(request, 'update_article.html', context={'update_post': update_form,
                                                                    'message_error': 'Something went Wrong!!!',
-                                                                   'profile': profile, 'notify': collect_notifications(request)})
+                                                                   'profile': profile,
+                                                                   'notify': collect_notifications(request)})
 
-    return render(request, 'update_article.html', context={'update_post': update_form, 'profile': profile, 'notify': collect_notifications(request)})
+    return render(request, 'update_article.html',
+                  context={'update_post': update_form, 'profile': profile, 'notify': collect_notifications(request)})
 
 
 @login_required(login_url='user_login')
 def change_password(request):
-
     if mobile_check(request):
         return render(request, 'stop.html')
 
@@ -483,18 +477,20 @@ def change_password(request):
                 request.user.save(update_fields=['password'])
 
                 return render(request, 'changepassword.html',
-                              context={'form': f1, 'message': 'Password updated successfully', 'profile': profile, 'notify': collect_notifications(request)})
+                              context={'form': f1, 'message': 'Password updated successfully', 'profile': profile,
+                                       'notify': collect_notifications(request)})
 
             else:
                 return render(request, 'changepassword.html',
-                              context={'form': f1, 'message_error': 'Password is incorrect', 'profile': profile, 'notify': collect_notifications(request)})
+                              context={'form': f1, 'message_error': 'Password is incorrect', 'profile': profile,
+                                       'notify': collect_notifications(request)})
 
-    return render(request, 'changepassword.html', context={'form': f1, 'profile': profile, 'notify': collect_notifications(request)})
+    return render(request, 'changepassword.html',
+                  context={'form': f1, 'profile': profile, 'notify': collect_notifications(request)})
 
 
 @login_required(login_url='user_login')
 def profile_view(request, username):
-
     if mobile_check(request):
         return render(request, 'stop.html')
 
@@ -529,7 +525,8 @@ def profile_view(request, username):
         if 'update_profile' in request.POST:
             if request.user.username == username:
                 return render(request, 'profile.html', context={'form_1': f1, 'form_2': f2, 'edit_show': True,
-                                                                'profiles': profiles, 'profile': profile, 'notify': collect_notifications(request)})
+                                                                'profiles': profiles, 'profile': profile,
+                                                                'notify': collect_notifications(request)})
 
         f2 = alumni_details_more(instance=profiles, data=request.POST, files=request.FILES or None)
         if f2.is_valid():
@@ -538,11 +535,13 @@ def profile_view(request, username):
             profile.save(update_fields=['college'])
             return render(request, 'profile.html', context={'edit': True, 'profile': profile,
                                                             'message': 'Profile updated successfully!!!',
-                                                            'profiles': profiles, 'notify': collect_notifications(request)})
+                                                            'profiles': profiles,
+                                                            'notify': collect_notifications(request)})
         elif not f2.is_valid():
             return render(request, 'profile.html',
                           context={'form_1': f1, 'form_2': f2, 'edit': True, 'edit_show': True, 'profile': profile,
-                                   'message_error': 'Something went wrong!!!', 'profiles': profiles, 'notify': collect_notifications(request)})
+                                   'message_error': 'Something went wrong!!!', 'profiles': profiles,
+                                   'notify': collect_notifications(request)})
 
     if request.user.username == username:
         context = {
@@ -567,7 +566,6 @@ def profile_view(request, username):
 
 @login_required(login_url='user_login')
 def alumni_list(request):
-
     if mobile_check(request):
         return render(request, 'stop.html')
 
@@ -580,6 +578,28 @@ def alumni_list(request):
     search = request.GET.get('search')
     if search:
         return HttpResponseRedirect('dashboard/?search=%s' % search)
+
+    friend_id = request.GET.get('friend_id')
+    if friend_id:
+        friend, created = add_friend.objects.get_or_create(profile=profile,
+                                                           friends=alumni.objects.get(user__username=friend_id))
+        if not created:
+            friend.save()
+
+    cancel_friend_id = request.GET.get('cancel_friend_id')
+    if cancel_friend_id:
+        friend = add_friend.objects.get(profile=profile,
+                                        friends=alumni.objects.get(
+                                            user__username=cancel_friend_id)) or add_friend.objects.get(
+            profile=alumni.objects.get(user__username=cancel_friend_id),
+            friends=profile)
+        friend.delete()
+
+    confirm_friend_id = request.GET.get('confirm_friend_id')
+    if confirm_friend_id:
+        friend = add_friend.objects.get(profile=alumni.objects.get(user__username=confirm_friend_id), friends=profile)
+        friend.confirm = True
+        friend.save(update_fields=['confirm', ])
 
     try:
         college_id = alumni.objects.get(user=request.user).college_id
@@ -771,7 +791,6 @@ def list_internships(request):
 
 @login_required(login_url='user_login')
 def event(request):
-
     if mobile_check(request):
         return render(request, 'stop.html')
 
@@ -863,7 +882,6 @@ def call_delete(request, file_id):
 
 @login_required(login_url='user_login')
 def academic_token(request):
-
     if mobile_check(request):
         return render(request, 'stop.html')
 
