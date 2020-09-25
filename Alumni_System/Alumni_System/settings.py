@@ -139,8 +139,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 LOGIN_REDIRECT_URL = 'user_logged_in'
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '961701122494-b8v1lnj1k0i99sg5sbg1e6nqtsgv8kkh.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'ZRJ4T7hcSTcqhYOFUAWzcHY_'
-
 
 MAIL_KEY = lines[1]
