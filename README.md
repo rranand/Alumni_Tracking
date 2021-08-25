@@ -34,9 +34,9 @@ Verification system is not working right now, because I removed the credentials 
   ```
   sudo apt install python3-venv
 
-  python3 -m venv hms
+  python3 -m venv alumniTracking
   
-  source hms/bin/activate
+  source alumniTracking/bin/activate
 
   pip3 install -r requirements.txt
 
